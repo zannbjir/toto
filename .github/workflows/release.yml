@@ -46,6 +46,7 @@ jobs:
           alias: ${{ secrets.KEY_ALIAS }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          buildToolsVersion: "35.0.0"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2

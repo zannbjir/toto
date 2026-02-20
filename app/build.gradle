@@ -25,11 +25,11 @@ android {
     }
 
     defaultConfig {
-		applicationId 'io.github.kotatsuredo.kotatsu'
+		applicationId 'io.github.toto.kotatsu'
 		minSdk = 23
 		targetSdk = 36
-		versionCode = 2007
-		versionName = '9.6.4'
+		versionCode = 1010
+		versionName = '9.0.1'
 		generatedDensities = []
 		testInstrumentationRunner 'org.koitharu.kotatsu.HiltTestRunner'
 		ksp {
@@ -46,6 +46,33 @@ android {
 		}
 		resValue 'string', 'tg_backup_bot_token', localProperties.getProperty('tg_backup_bot_token', '')
 	}
+	signingConfigs {
+        release {
+            storeFile file(System.getenv("KEYSTORE_FILE"))
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix = '.debug'
+        }
+        release {
+            signingConfig signingConfigs.release 
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        nightly {
+            initWith release
+            signingConfig signingConfigs.release 
+            applicationIdSuffix = '.nightly'
+        }
+    }
+    ...
+}
 	buildTypes {
 		debug {
 			applicationIdSuffix = '.debug'
@@ -130,7 +157,7 @@ dependencies {
 		parsersVersion = System.getProperty('parsersVersionOverride')
 	}
 	//noinspection UseTomlInstead
-	implementation("com.github.clquwu:kotatsu-parsers-redo:$parsersVersion") {
+	implementation("com.github.zannbjir:toto-parsers:$parsersVersion") {
 		exclude group: 'org.json', module: 'json'
 	}
 

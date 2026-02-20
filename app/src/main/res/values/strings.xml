@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name" translatable="false">Totogo</string>
+    <string name="app_name" translatable="false">TotoGo</string>
     <string name="local_storage">Local storage</string>
     <string name="favourites">Favorites</string>
     <string name="history">History</string>
@@ -915,4 +915,5 @@
 	<string name="password_reset">Password reset successfully</string>
 	<string name="no_reset_token">No reset token provided</string>
 </resources>
+
 

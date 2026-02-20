@@ -39,7 +39,7 @@ jobs:
       - name: Decode Keystore
         run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > app/release.keystore
 
-      # 🏷️ SET TAG & NAME
+# 🏷️ SET TAG
       - name: Set Release Info
         id: info
         run: |
@@ -57,12 +57,21 @@ jobs:
             echo "name=Stable v${VER}" >> $GITHUB_OUTPUT
           fi
 
-      # 📝 RELEASE BODY
+# 📝 FORMAT BULLET
+      - name: Format Description
+        id: desc
+        run: |
+          FORMATTED=$(echo "${{ github.event.inputs.description }}" | sed 's/- /\n• /g')
+          echo "text<<EOF" >> $GITHUB_OUTPUT
+          echo "$FORMATTED" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+# 📝 RELEASE BODY
       - name: Prepare Release Body
         run: |
-          echo "## 🚀 Totogo Release" > BODY.md
+          echo "## 🚀 TotoGo Release" > BODY.md
           echo "" >> BODY.md
-          echo "${{ github.event.inputs.description }}" >> BODY.md
+          echo "${{ steps.desc.outputs.text }}" >> BODY.md
 
       - name: Build Signed APK
         run: ./gradlew assembleRelease
@@ -72,6 +81,7 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
 
+# 📦 UPLOAD
       - name: Upload Release
         id: release
         uses: softprops/action-gh-release@v2
@@ -84,20 +94,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+# 📢 DISCORD
       - name: Discord Notification
         if: success()
         run: |
-          MSG="📦 **New Totogo Release!**\nTag: ${{ steps.info.outputs.tag }}\nBy: ${{ github.actor }}\n📝 ${{ github.event.inputs.description }}\n\n🔗 Download:\n${{ steps.release.outputs.url }}"
+          MSG="📦 **New TotoGo Release!**\n\nTag: ${{ steps.info.outputs.tag }}\n\n${{ steps.desc.outputs.text }}\n\n🔗 Download:\n${{ steps.release.outputs.url }}"
           curl -X POST "$DISCORD_RELEASE_WEBHOOK" \
           -H "Content-Type: application/json" \
           -d "{\"content\": \"$MSG\"}"
         env:
           DISCORD_RELEASE_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
 
+# 📲 WHATSAPP FONNTE
       - name: WhatsApp Notification (Fonnte)
         if: success()
         run: |
-          MSG="📦 *New Totogo Release!*\n\nTag: ${{ steps.info.outputs.tag }}\n📝 ${{ github.event.inputs.description }}\n\n${{ steps.release.outputs.url }}"
+          MSG="📦 *New TotoGo Release!*\n\nTag: ${{ steps.info.outputs.tag }}\n\n${{ steps.desc.outputs.text }}\n\n${{ steps.release.outputs.url }}"
           curl -X POST https://api.fonnte.com/send \
             -H "Authorization: $FONNTE_TOKEN" \
             -H "Content-Type: application/json" \

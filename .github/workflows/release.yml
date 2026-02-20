@@ -14,6 +14,9 @@ on:
       version:
         description: 'Versi Stable (contoh: 9.3)'
         required: false
+      description:
+        description: 'Deskripsi release'
+        required: false
 
 jobs:
   build:
@@ -54,10 +57,12 @@ jobs:
             echo "name=Stable v${VER}" >> $GITHUB_OUTPUT
           fi
 
-      # 📝 AUTO CHANGELOG
-      - name: Generate Changelog
+      # 📝 RELEASE BODY
+      - name: Prepare Release Body
         run: |
-          git log -5 --pretty=format:"- %s" > CHANGELOG_AUTO.md
+          echo "## 🚀 Totogo Release" > BODY.md
+          echo "" >> BODY.md
+          echo "${{ github.event.inputs.description }}" >> BODY.md
 
       - name: Build Signed APK
         run: ./gradlew assembleRelease
@@ -74,33 +79,29 @@ jobs:
           tag_name: ${{ steps.info.outputs.tag }}
           name: ${{ steps.info.outputs.name }}
           prerelease: ${{ github.event.inputs.type == 'nightly' }}
-          body_path: CHANGELOG_AUTO.md
+          body_path: BODY.md
           files: app/build/outputs/apk/release/app-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 📡 DISCORD NOTIF
       - name: Discord Notification
         if: success()
         run: |
-          curl -H "Content-Type: application/json" \
-          -X POST \
-          -d '{
-            "content": "📦 *New Totogo Release!*\nTag: ${{ steps.info.outputs.tag }}\nBy: ${{ github.actor }}\nDownload:\n${{ steps.release.outputs.url }}"
-          }' \
-          ${{ secrets.DISCORD_WEBHOOK }}
+          MSG="📦 **New Totogo Release!**\nTag: ${{ steps.info.outputs.tag }}\nBy: ${{ github.actor }}\n📝 ${{ github.event.inputs.description }}\n\n🔗 Download:\n${{ steps.release.outputs.url }}"
+          curl -X POST "$DISCORD_RELEASE_WEBHOOK" \
+          -H "Content-Type: application/json" \
+          -d "{\"content\": \"$MSG\"}"
+        env:
+          DISCORD_RELEASE_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
 
-      # 📲 WHATSAPP NOTIF (FONNTE)
       - name: WhatsApp Notification (Fonnte)
         if: success()
         run: |
+          MSG="📦 *New Totogo Release!*\n\nTag: ${{ steps.info.outputs.tag }}\n📝 ${{ github.event.inputs.description }}\n\n${{ steps.release.outputs.url }}"
           curl -X POST https://api.fonnte.com/send \
             -H "Authorization: $FONNTE_TOKEN" \
             -H "Content-Type: application/json" \
-            -d '{
-              "target": "'$FONNTE_TARGET'",
-              "message": "📦 *New Totogo Release!*\n\nTag: ${{ steps.info.outputs.tag }}\nBy: ${{ github.actor }}\nDownload:\n${{ steps.release.outputs.url }}"
-            }'
+            -d "{\"target\":\"$FONNTE_TARGET\",\"message\":\"$MSG\"}"
         env:
           FONNTE_TOKEN: ${{ secrets.FONNTE_TOKEN }}
           FONNTE_TARGET: ${{ secrets.FONNTE_TARGET }}

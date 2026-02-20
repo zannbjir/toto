@@ -1,7 +1,19 @@
-name: Build Signed Release APK
+name: Build Release
 
 on:
   workflow_dispatch:
+    inputs:
+      type:
+        description: 'Tipe build'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+          - release
+          - nightly
+      version:
+        description: 'Versi Stable (contoh: 9.3)'
+        required: false
 
 jobs:
   build:
@@ -10,24 +22,44 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Set up JDK 17
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
 
       - name: Decode Keystore
-        run: |
-          echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > app/release.keystore
+        run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > app/release.keystore
 
-      - name: Build Signed Release APK
+      # 🏷️ SET TAG & NAME
+      - name: Set Release Info
+        id: info
+        run: |
+          if [ "${{ github.event.inputs.type }}" = "nightly" ]; then
+            DATE=$(TZ=Asia/Jakarta date +'%d%m%Y')
+            echo "tag=nightly-${DATE}" >> $GITHUB_OUTPUT
+            echo "name=Nightly Build ${DATE}" >> $GITHUB_OUTPUT
+          else
+            VER="${{ github.event.inputs.version }}"
+            if [ -z "$VER" ]; then
+              echo "Masukkan versi untuk Stable!"
+              exit 1
+            fi
+            echo "tag=v${VER}" >> $GITHUB_OUTPUT
+            echo "name=Stable v${VER}" >> $GITHUB_OUTPUT
+          fi
+
+      # 📝 AUTO CHANGELOG
+      - name: Generate Changelog
+        run: |
+          git log -5 --pretty=format:"- %s" > CHANGELOG_AUTO.md
+
+      - name: Build Signed APK
         run: ./gradlew assembleRelease
         env:
           KEYSTORE_FILE: release.keystore
@@ -35,11 +67,44 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
 
-      - name: Create GitHub Release
+      - name: Upload Release
+        id: release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.run_number }}
-          name: Release v${{ github.run_number }}
+          tag_name: ${{ steps.info.outputs.tag }}
+          name: ${{ steps.info.outputs.name }}
+          prerelease: ${{ github.event.inputs.type == 'nightly' }}
+          body_path: CHANGELOG_AUTO.md
           files: app/build/outputs/apk/release/app-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 📡 DISCORD NOTIF
+      - name: Discord Notification
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d '{
+            "content": "📦 *New Totogo Release!*\nTag: ${{ steps.info.outputs.tag }}\nBy: ${{ github.actor }}\nDownload:\n${{ steps.release.outputs.url }}"
+          }' \
+          ${{ secrets.DISCORD_WEBHOOK }}
+
+      # 📲 WHATSAPP NOTIF (FONNTE)
+      - name: WhatsApp Notification (Fonnte)
+        if: success()
+        run: |
+          curl -X POST https://api.fonnte.com/send \
+            -H "Authorization: $FONNTE_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "target": "'$FONNTE_TARGET'",
+              "message": "📦 *New Totogo Release!*\n\nTag: ${{ steps.info.outputs.tag }}\nBy: ${{ github.actor }}\nDownload:\n${{ steps.release.outputs.url }}"
+            }'
+        env:
+          FONNTE_TOKEN: ${{ secrets.FONNTE_TOKEN }}
+          FONNTE_TARGET: ${{ secrets.FONNTE_TARGET }}
+
+      - name: Clean Keystore
+        if: always()
+        run: rm -f app/release.keystore

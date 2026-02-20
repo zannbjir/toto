@@ -14,7 +14,7 @@ jobs:
         uses: tsickert/discord-webhook@v7.0.0
         with:
           webhook-url: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
-          content: "<@&1435675462759088168>"
+          content: "<@&1365885762117304330>"
           embed-title: "🚀 New Release: ${{ github.event.repository.name }} v${{ github.event.release.tag_name }}"
           embed-url: "${{ github.event.release.html_url }}"
           embed-description: "${{ github.event.release.body }}"

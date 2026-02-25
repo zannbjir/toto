@@ -99,6 +99,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+
+      - name: ShortLink
+        id: short
+        run: |
+         SHORT="https://link.wibu.life/TotoGo"
+         echo "url=$SHORT" >> $GITHUB_OUTPUT
+
 # 💬 DISCORD (EMBED)
       - name: Discord Notify
         if: success()
@@ -125,7 +132,7 @@ jobs:
       - name: WhatsApp Notify
         if: success()
         run: |
-          MSG="🚀 TotoGo Update Available!\n\n📦 Versi : ${{ steps.info.outputs.version }}\n📏 Ukuran : ${{ steps.apk.outputs.size }}\n🕒 Update : ${{ steps.apk.outputs.date }}\n\n📝 Changelog:\n${{ steps.desc.outputs.text }}\n\n⬇️ Download:\n${{ steps.release.outputs.url }}"
+          MSG="🚀 TotoGo Update Available!\n\n📦 Versi : ${{ steps.info.outputs.version }}\n📏 Ukuran : ${{ steps.apk.outputs.size }}\n🕒 Update : ${{ steps.apk.outputs.date }}\n\n📝 Changelog:\n${{ steps.desc.outputs.text }}\n\n⬇️ Download:\n${{ steps.short.outputs.url }}"
           curl -X POST https://api.fonnte.com/send \
             -H "Authorization: $FONNTE_TOKEN" \
             -H "Content-Type: application/json" \

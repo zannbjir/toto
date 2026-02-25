@@ -55,7 +55,7 @@ jobs:
       - name: Format Desc
         id: desc
         run: |
-          FORMATTED=$(echo "${{ github.event.inputs.description }}" | sed 's/- /\n• /g')
+          FORMATTED=$(echo "${{ github.event.inputs.description }}" | sed 's/- /\n- /g')
           echo "text<<EOF" >> $GITHUB_OUTPUT
           echo "$FORMATTED" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT

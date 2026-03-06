@@ -85,10 +85,6 @@ jobs:
         run: |
           echo "🚀 TotoGo Release" > BODY.md
           echo "" >> BODY.md
-          echo "📦 Versi : ${{ steps.info.outputs.version }}" >> BODY.md
-          echo "📏 Ukuran : ${{ steps.apk.outputs.size }}" >> BODY.md
-          echo "🕒 Update : ${{ steps.apk.outputs.date }}" >> BODY.md
-          echo "" >> BODY.md
           echo "${{ steps.desc.outputs.text }}" >> BODY.md
 
 # 🚀 UPLOAD GITHUB RELEASE

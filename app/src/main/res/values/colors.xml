@@ -33,4 +33,7 @@
 	<color name="background_sakura">#FFF8F8</color>
 	<color name="background_mamimi">#FFF8F7</color>
 	<color name="background_kanade">#F3F3F3</color>
+
+    <!-- Panorama cover scrim -->
+    <color name="scrim_panorama">#66000000</color>
 </resources>

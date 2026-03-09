@@ -24,8 +24,8 @@ android {
         applicationId 'io.github.toto.kotatsu'
         minSdk = 23
         targetSdk = 36
-        versionCode = 1040
-        versionName = '9.0.7'
+        versionCode = 1045
+        versionName = '9.0.8'
         generatedDensities = []
         testInstrumentationRunner 'org.koitharu.kotatsu.HiltTestRunner'
 

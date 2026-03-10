@@ -108,6 +108,15 @@ class CoverImageView @JvmOverloads constructor(
 
 	private fun isAnimatedUrl(url: String?): Boolean = url?.isAnimatedImage() == true
 
+    private fun newRequestBuilder(applyTrim: Boolean) = super.newRequestBuilder().apply {
+		if (trimImage && applyTrim) {
+			transformations(listOf(TrimTransformation()))
+		}
+		if (hasAspectRatio) {
+			size(CoverSizeResolver(this@CoverImageView))
+		}
+    }
+
 	override fun setImageAsync(page: ReaderPage) = enqueueRequest(
 		newRequestBuilder(applyTrim = true)
 			.data(page.toMangaPage())
@@ -158,15 +167,6 @@ class CoverImageView @JvmOverloads constructor(
 			.bookmarkExtra(bookmark)
 			.build(),
 	)
-
-	private fun newRequestBuilder(applyTrim: Boolean) = super.newRequestBuilder().apply {
-		if (trimImage && applyTrim) {
-			transformations(listOf(TrimTransformation()))
-		}
-		if (hasAspectRatio) {
-			size(CoverSizeResolver(this@CoverImageView))
-		}
-	}
 
 	@Deprecated("Use newRequestBuilder(applyTrim) instead", level = DeprecationLevel.HIDDEN)
 	override fun newRequestBuilder() = newRequestBuilder(applyTrim = true)

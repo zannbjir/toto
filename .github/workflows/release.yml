@@ -56,11 +56,11 @@ jobs:
         id: desc
         run: |
           RAW="${{ github.event.inputs.description }}"
-          SAFE=$(printf "%s" "$RAW" \
-            | sed 's/ - /\n- /g' \
-            | sed ':a;N;$!ba;s/\n/\\n/g' \
-            | sed 's/"/\\"/g')
-          echo "text=$SAFE" >> $GITHUB_OUTPUT
+          FORMATTED=$(echo "$RAW" | sed 's/ - /\n- /g')
+          echo "text<<EOF" >> $GITHUB_OUTPUT
+          echo "$FORMATTED" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
 
 # 🔨 BUILD APK
       - name: Build APK

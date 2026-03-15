@@ -149,7 +149,19 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), AppBarOwner, BottomNav
 		viewModel.isLoading.observe(this, this::onLoadingStateChanged)
 		viewModel.isResumeEnabled.observe(this, this::onResumeEnabledChanged)
 		viewModel.feedCounter.observe(this, ::onFeedCounterChanged)
-		viewModel.appUpdate.observe(this, MenuInvalidator(this))
+        viewModel.appUpdate.observe(this, MenuInvalidator(this))
+        viewModel.appUpdate.observe(this) { update ->
+            if (update != null) {
+                val prefs = getSharedPreferences("kotatsu_update_prefs", MODE_PRIVATE)
+                val lastPopupTime = prefs.getLong("last_update_popup", 0)
+                val currentTime = System.currentTimeMillis()
+
+                if (currentTime - lastPopupTime > 3600000L) {
+                    router.openAppUpdate()
+                    prefs.edit().putLong("last_update_popup", currentTime).apply()
+                }
+            }
+        }
 		viewModel.onFirstStart.observeEvent(this) { router.showWelcomeSheet() }
 		viewModel.isBottomNavPinned.observe(this, ::setNavbarPinned)
 		searchSuggestionViewModel.isIncognitoModeEnabled.observe(this, this::onIncognitoModeChanged)

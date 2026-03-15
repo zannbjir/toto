@@ -51,16 +51,26 @@ jobs:
             echo "version=v${VER}" >> $GITHUB_OUTPUT
           fi
 
-# 📝 FORMAT CHANGELOG AUTO BULLET
+# 📝 FORMAT CHANGELOG AUTO BULLET & CAPITALIZE
       - name: Format Changelog
         id: desc
         run: |
           RAW="${{ github.event.inputs.description }}"
-          FORMATTED=$(echo "$RAW" | sed 's/ - /\n- /g')
+          
+          # 1. Pecah " - " jadi baris baru
+          # 2. Pastikan tiap baris diawali "- "
+          # 3. Auto-Capitalize: Huruf pertama setelah "- " jadi Besar
+          FORMATTED=$(echo "$RAW" | sed 's/ - /\n- /g' | sed 's/^- //g' | sed 's/^/- /' | sed 's/- \([a-z]\)/- \U\1/g')
+
+          # Simpan untuk BODY.md (Enter asli)
           echo "text<<EOF" >> $GITHUB_OUTPUT
           echo "$FORMATTED" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
+          # Simpan untuk JSON API Discord/WA (Enter jadi \n)
+          # Menggunakan perl untuk konversi newline ke string \n agar JSON valid
+          JSON_SAFE=$(echo "$FORMATTED" | perl -pe 's/\n/\\n/g' | sed 's/\\n$//')
+          echo "json_safe=$JSON_SAFE" >> $GITHUB_OUTPUT
 
 # 🔨 BUILD APK
       - name: Build APK
@@ -85,7 +95,9 @@ jobs:
         run: |
           echo "🚀 TotoGo Release" > BODY.md
           echo "" >> BODY.md
-          echo "${{ steps.desc.outputs.text }}" >> BODY.md
+          cat <<EOF >> BODY.md
+          ${{ steps.desc.outputs.text }}
+          EOF
 
 # 🚀 UPLOAD GITHUB RELEASE
       - name: Upload Release
@@ -103,7 +115,7 @@ jobs:
       - name: ShortLink
         id: short
         run: |
-          SHORT="https://link.wibu.life/TotoGo"
+          SHORT="https://totogo.pages.dev/download/"
           echo "url=$SHORT" >> $GITHUB_OUTPUT
 
 # 💬 DISCORD EMBED
@@ -119,7 +131,7 @@ jobs:
                 {\"name\": \"Versi\", \"value\": \"${{ steps.info.outputs.version }}\", \"inline\": true},
                 {\"name\": \"Ukuran\", \"value\": \"${{ steps.apk.outputs.size }}\", \"inline\": true},
                 {\"name\": \"Update\", \"value\": \"${{ steps.apk.outputs.date }}\", \"inline\": false},
-                {\"name\": \"Changelog\", \"value\": \"${{ steps.desc.outputs.text }}\", \"inline\": false}
+                {\"name\": \"Changelog\", \"value\": \"${{ steps.desc.outputs.json_safe }}\", \"inline\": false}
               ],
               \"url\": \"${{ steps.short.outputs.url }}\"
             }]
@@ -131,12 +143,13 @@ jobs:
       - name: WhatsApp Notify
         if: success()
         run: |
-          MSG="🚀 TotoGo Update Available!\n\n📦 Versi : ${{ steps.info.outputs.version }}\n📏 Ukuran : ${{ steps.apk.outputs.size }}\n🕒 Update : ${{ steps.apk.outputs.date }}\n\n📝 Changelog:\n${{ steps.desc.outputs.text }}\n\n⬇️ Download:\n${{ steps.short.outputs.url }}"
-          SAFE=$(printf "%s" "$MSG" | sed 's/"/\\"/g')
+          MSG="🚀 *TotoGo Update Available!*\n\n📦 *Versi* : ${{ steps.info.outputs.version }}\n📏 *Ukuran* : ${{ steps.apk.outputs.size }}\n🕒 *Update* : ${{ steps.apk.outputs.date }}\n\n📝 *Changelog*:\n${{ steps.desc.outputs.json_safe }}\n\n⬇️ *Download*:\n${{ steps.short.outputs.url }}"
+          
+          # Gunakan variabel MSG langsung karena json_safe sudah menangani quote dan newline
           curl -X POST https://api.fonnte.com/send \
             -H "Authorization: $FONNTE_TOKEN" \
             -H "Content-Type: application/json" \
-            -d "{\"target\":\"$FONNTE_TARGET\",\"message\":\"$SAFE\"}"
+            -d "{\"target\":\"$FONNTE_TARGET\",\"message\":\"$MSG\"}"
         env:
           FONNTE_TOKEN: ${{ secrets.FONNTE_TOKEN }}
           FONNTE_TARGET: ${{ secrets.FONNTE_TARGET }}

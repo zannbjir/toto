@@ -35,7 +35,7 @@ jobs:
       - name: Decode Keystore
         run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > app/release.keystore
 
-# 🏷️ TAG & VERSION
+# 🏷️ TAG, VERSION, APK NAME & NOTIF TITLE
       - name: Set Info
         id: info
         run: |
@@ -44,11 +44,17 @@ jobs:
             echo "tag=nightly-${DATE}" >> $GITHUB_OUTPUT
             echo "name=Nightly ${DATE}" >> $GITHUB_OUTPUT
             echo "version=${DATE}" >> $GITHUB_OUTPUT
+            echo "apk_name=nightly-app-release.apk" >> $GITHUB_OUTPUT
+            echo "notif_title=🌙 TotoGo Nightly Update Available!" >> $GITHUB_OUTPUT
+            echo "body_title=🌙 TotoGo Nightly Release" >> $GITHUB_OUTPUT
           else
             VER="${{ github.event.inputs.version }}"
             echo "tag=v${VER}" >> $GITHUB_OUTPUT
             echo "name=Stable v${VER}" >> $GITHUB_OUTPUT
             echo "version=v${VER}" >> $GITHUB_OUTPUT
+            echo "apk_name=stable-app-release.apk" >> $GITHUB_OUTPUT
+            echo "notif_title=🚀 TotoGo Stable Update Available!" >> $GITHUB_OUTPUT
+            echo "body_title=🚀 TotoGo Stable Release" >> $GITHUB_OUTPUT
           fi
 
 # 📝 FORMAT CHANGELOG AUTO BULLET & CAPITALIZE
@@ -68,13 +74,15 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
           # Simpan untuk JSON API Discord/WA (Enter jadi \n)
-          # Menggunakan perl untuk konversi newline ke string \n agar JSON valid
           JSON_SAFE=$(echo "$FORMATTED" | perl -pe 's/\n/\\n/g' | sed 's/\\n$//')
           echo "json_safe=$JSON_SAFE" >> $GITHUB_OUTPUT
 
-# 🔨 BUILD APK
-      - name: Build APK
-        run: ./gradlew assembleRelease
+# 🔨 BUILD & RENAME APK
+      - name: Build & Rename APK
+        run: |
+          ./gradlew assembleRelease
+          # Ubah nama APK sesuai dengan tipe build
+          mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/${{ steps.info.outputs.apk_name }}
         env:
           KEYSTORE_FILE: release.keystore
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -85,7 +93,8 @@ jobs:
       - name: Get APK Info
         id: apk
         run: |
-          SIZE=$(du -h app/build/outputs/apk/release/app-release.apk | cut -f1)
+          # Gunakan nama file APK yang sudah dinamis
+          SIZE=$(du -h app/build/outputs/apk/release/${{ steps.info.outputs.apk_name }} | cut -f1)
           DATE=$(TZ=Asia/Jakarta date +"%d %b %Y - %H:%M WIB")
           echo "size=$SIZE" >> $GITHUB_OUTPUT
           echo "date=$DATE" >> $GITHUB_OUTPUT
@@ -93,7 +102,7 @@ jobs:
 # 📦 RELEASE BODY
       - name: Prepare Body
         run: |
-          echo "🚀 TotoGo Release" > BODY.md
+          echo "${{ steps.info.outputs.body_title }}" > BODY.md
           echo "" >> BODY.md
           cat <<EOF >> BODY.md
           ${{ steps.desc.outputs.text }}
@@ -107,7 +116,7 @@ jobs:
           tag_name: ${{ steps.info.outputs.tag }}
           name: ${{ steps.info.outputs.name }}
           body_path: BODY.md
-          files: app/build/outputs/apk/release/app-release.apk
+          files: app/build/outputs/apk/release/${{ steps.info.outputs.apk_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -115,7 +124,7 @@ jobs:
       - name: ShortLink
         id: short
         run: |
-          SHORT="https://totogo.pages.dev/download/"
+          SHORT="https://tg.foo.ng/download/"
           echo "url=$SHORT" >> $GITHUB_OUTPUT
 
 # 💬 DISCORD EMBED
@@ -126,7 +135,7 @@ jobs:
           -H "Content-Type: application/json" \
           -d "{
             \"embeds\": [{
-              \"title\": \"🚀 TotoGo Update Available!\",
+              \"title\": \"${{ steps.info.outputs.notif_title }}\",
               \"fields\": [
                 {\"name\": \"Versi\", \"value\": \"${{ steps.info.outputs.version }}\", \"inline\": true},
                 {\"name\": \"Ukuran\", \"value\": \"${{ steps.apk.outputs.size }}\", \"inline\": true},
@@ -143,9 +152,8 @@ jobs:
       - name: WhatsApp Notify
         if: success()
         run: |
-          MSG="🚀 *TotoGo Update Available!*\n\n📦 *Versi* : ${{ steps.info.outputs.version }}\n📏 *Ukuran* : ${{ steps.apk.outputs.size }}\n🕒 *Update* : ${{ steps.apk.outputs.date }}\n\n📝 *Changelog*:\n${{ steps.desc.outputs.json_safe }}\n\n⬇️ *Download*:\n${{ steps.short.outputs.url }}"
+          MSG="*${{ steps.info.outputs.notif_title }}*\n\n📦 *Versi* : ${{ steps.info.outputs.version }}\n📏 *Ukuran* : ${{ steps.apk.outputs.size }}\n🕒 *Update* : ${{ steps.apk.outputs.date }}\n\n📝 *Changelog*:\n${{ steps.desc.outputs.json_safe }}\n\n⬇️ *Download*:\n${{ steps.short.outputs.url }}"
           
-          # Gunakan variabel MSG langsung karena json_safe sudah menangani quote dan newline
           curl -X POST https://api.fonnte.com/send \
             -H "Authorization: $FONNTE_TOKEN" \
             -H "Content-Type: application/json" \

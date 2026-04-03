@@ -52,7 +52,7 @@ jobs:
             echo "tag=v${VER}" >> $GITHUB_OUTPUT
             echo "name=Stable v${VER}" >> $GITHUB_OUTPUT
             echo "version=v${VER}" >> $GITHUB_OUTPUT
-            echo "apk_name=app-release.apk" >> $GITHUB_OUTPUT
+            echo "apk_name=stable-app-release.apk" >> $GITHUB_OUTPUT
             echo "notif_title=🚀 TotoGo Stable Update Available!" >> $GITHUB_OUTPUT
             echo "body_title=🚀 TotoGo Stable Release" >> $GITHUB_OUTPUT
           fi

@@ -11,10 +11,12 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.appcompat.view.ActionMode
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import org.koitharu.kotatsu.explore.ui.preset.SourcePresetListActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
@@ -81,7 +83,7 @@ class ExploreFragment :
 			addItemDecoration(TypedListSpacingDecoration(context, false))
 			checkNotNull(sourceSelectionController).attachToRecyclerView(this)
 		}
-		addMenuProvider(ExploreMenuProvider(router))
+		addMenuProvider(ExploreMenuProvider(requireContext(), router))
 		viewModel.content.observe(viewLifecycleOwner, checkNotNull(exploreAdapter))
 		viewModel.onError.observeEvent(viewLifecycleOwner, SnackbarErrorObserver(binding.recyclerView, this))
 		viewModel.onOpenManga.observeEvent(viewLifecycleOwner, ::onOpenManga)
@@ -127,7 +129,35 @@ class ExploreFragment :
 			R.id.button_more -> router.openSuggestions()
 			R.id.button_downloads -> router.openDownloads()
 			R.id.button_random -> viewModel.openRandom()
+			R.id.button_presets -> startActivity(
+				Intent(requireContext(), SourcePresetListActivity::class.java),
+			)
+			R.id.button_presets_dropdown -> showPresetsPopup(v)
 		}
+	}
+
+	private fun showPresetsPopup(anchor: View) {
+		val presets = viewModel.presets.value
+		val popup = PopupMenu(requireContext(), anchor)
+		popup.menu.add(Menu.NONE, 0, 0, R.string.default_sources)
+		presets.forEachIndexed { index, preset ->
+			popup.menu.add(Menu.NONE, index + 1, index + 1, preset.title)
+		}
+		popup.setOnMenuItemClickListener { menuItem ->
+			val position = menuItem.itemId
+			if (position == 0) {
+				viewModel.setActivePreset(0L)
+			} else {
+				val preset = presets[position - 1]
+				if (viewModel.activePresetId == preset.id) {
+					viewModel.setActivePreset(0L)
+				} else {
+					viewModel.setActivePreset(preset.id)
+				}
+			}
+			true
+		}
+		popup.show()
 	}
 
 	override fun onItemClick(item: MangaSourceItem, view: View) {

@@ -883,4 +883,20 @@
     <string name="available_pattern">%1$s tersedia</string>
     <string name="pinned_sources_only">Hanya sumber yang disematkan</string>
     <string name="hide_empty_sources">Sembunyikan sumber kosong</string>
+    <string name="source_presets">Preset sumber</string>
+	<string name="create_preset">Preset baru</string>
+	<string name="edit_preset">Edit preset</string>
+	<string name="preset_name">Nama preset</string>
+	<string name="preset_languages">Bahasa</string>
+	<string name="preset_sources">Sumber</string>
+	<string name="preset_created">Preset dibuat</string>
+	<string name="preset_saved">Preset disimpan</string>
+	<string name="preset_deleted">Preset dihapus</string>
+	<string name="preset_activated">Preset diaktifkan</string>
+	<string name="preset_deactivated">Preset dinonaktifkan</string>
+	<string name="no_presets">Belum ada preset</string>
+	<string name="no_presets_text">Buat preset untuk dengan cepat beralih antara konfigurasi sumber yang berbeda</string>
+	<string name="select_languages">Pilih bahasa</string>
+	<string name="manage_preset_sources">Kelola sumber</string>
+	<string name="default_sources">Default</string>
 </resources>

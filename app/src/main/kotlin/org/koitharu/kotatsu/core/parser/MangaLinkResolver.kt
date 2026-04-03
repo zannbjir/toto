@@ -26,7 +26,7 @@ class MangaLinkResolver @Inject constructor(
 ) {
 
 	suspend fun resolve(uri: Uri): Manga {
-		return if (uri.scheme == "kotatsu" || uri.host == "totogo.pages.dev") {
+		return if (uri.scheme == "kotatsu" || uri.host == "tg.foo.ng") {
 			resolveAppLink(uri)
 		} else {
 			resolveExternalLink(uri.toString())

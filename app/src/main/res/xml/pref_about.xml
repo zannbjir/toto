@@ -28,4 +28,10 @@
 		android:summary="@string/url_github"
 		android:title="@string/source_code" />
 
+	<Preference
+		android:key="about_report"
+		android:persistent="false"
+		android:summary="@string/url_report"
+		android:title="@string/report_bjir" />
+
 </PreferenceScreen>

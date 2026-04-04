@@ -17,6 +17,16 @@ on:
       description:
         description: 'Deskripsi release'
         required: false
+      notify_discord:
+        description: 'Kirim notifikasi ke Discord?'
+        required: true
+        type: boolean
+        default: true
+      notify_whatsapp:
+        description: 'Kirim notifikasi ke WhatsApp?'
+        required: true
+        type: boolean
+        default: true
 
 jobs:
   build:
@@ -47,6 +57,7 @@ jobs:
             echo "apk_name=nightly-app-release.apk" >> $GITHUB_OUTPUT
             echo "notif_title=🌙 TotoGo Nightly Update Available!" >> $GITHUB_OUTPUT
             echo "body_title=🌙 TotoGo Nightly Release" >> $GITHUB_OUTPUT
+            echo "target_repo=zannbjir/toto-malam" >> $GITHUB_OUTPUT
           else
             VER="${{ github.event.inputs.version }}"
             echo "tag=v${VER}" >> $GITHUB_OUTPUT
@@ -55,6 +66,7 @@ jobs:
             echo "apk_name=stable-app-release.apk" >> $GITHUB_OUTPUT
             echo "notif_title=🚀 TotoGo Stable Update Available!" >> $GITHUB_OUTPUT
             echo "body_title=🚀 TotoGo Stable Release" >> $GITHUB_OUTPUT
+            echo "target_repo=${{ github.repository }}" >> $GITHUB_OUTPUT
           fi
 
 # 📝 FORMAT CHANGELOG AUTO BULLET & CAPITALIZE
@@ -62,18 +74,12 @@ jobs:
         id: desc
         run: |
           RAW="${{ github.event.inputs.description }}"
-          
-          # 1. Pecah " - " jadi baris baru
-          # 2. Pastikan tiap baris diawali "- "
-          # 3. Auto-Capitalize: Huruf pertama setelah "- " jadi Besar
           FORMATTED=$(echo "$RAW" | sed 's/ - /\n- /g' | sed 's/^- //g' | sed 's/^/- /' | sed 's/- \([a-z]\)/- \U\1/g')
 
-          # Simpan untuk BODY.md (Enter asli)
           echo "text<<EOF" >> $GITHUB_OUTPUT
           echo "$FORMATTED" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-          # Simpan untuk JSON API Discord/WA (Enter jadi \n)
           JSON_SAFE=$(echo "$FORMATTED" | perl -pe 's/\n/\\n/g' | sed 's/\\n$//')
           echo "json_safe=$JSON_SAFE" >> $GITHUB_OUTPUT
 
@@ -81,7 +87,6 @@ jobs:
       - name: Build & Rename APK
         run: |
           ./gradlew assembleRelease
-          # Ubah nama APK sesuai dengan tipe build
           mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/${{ steps.info.outputs.apk_name }}
         env:
           KEYSTORE_FILE: release.keystore
@@ -93,7 +98,6 @@ jobs:
       - name: Get APK Info
         id: apk
         run: |
-          # Gunakan nama file APK yang sudah dinamis
           SIZE=$(du -h app/build/outputs/apk/release/${{ steps.info.outputs.apk_name }} | cut -f1)
           DATE=$(TZ=Asia/Jakarta date +"%d %b %Y - %H:%M WIB")
           echo "size=$SIZE" >> $GITHUB_OUTPUT
@@ -113,12 +117,14 @@ jobs:
         id: release
         uses: softprops/action-gh-release@v2
         with:
+          repository: ${{ steps.info.outputs.target_repo }}
           tag_name: ${{ steps.info.outputs.tag }}
           name: ${{ steps.info.outputs.name }}
           body_path: BODY.md
+          prerelease: ${{ github.event.inputs.type == 'nightly' }}
           files: app/build/outputs/apk/release/${{ steps.info.outputs.apk_name }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
 # 🔗 SHORTLINK MANUAL
       - name: ShortLink
@@ -129,7 +135,7 @@ jobs:
 
 # 💬 DISCORD EMBED
       - name: Discord Notify
-        if: success()
+        if: ${{ github.event.inputs.notify_discord == 'true' && success() }}
         run: |
           curl -X POST "$DISCORD_RELEASE_WEBHOOK" \
           -H "Content-Type: application/json" \
@@ -150,7 +156,7 @@ jobs:
 
 # 📲 WHATSAPP (FONNTE)
       - name: WhatsApp Notify
-        if: success()
+        if: ${{ github.event.inputs.notify_whatsapp == 'true' && success() }}
         run: |
           MSG="*${{ steps.info.outputs.notif_title }}*\n\n📦 *Versi* : ${{ steps.info.outputs.version }}\n📏 *Ukuran* : ${{ steps.apk.outputs.size }}\n🕒 *Update* : ${{ steps.apk.outputs.date }}\n\n📝 *Changelog*:\n${{ steps.desc.outputs.json_safe }}\n\n⬇️ *Download*:\n${{ steps.short.outputs.url }}"
           

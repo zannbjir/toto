@@ -86,8 +86,13 @@ jobs:
 # 🔨 BUILD & RENAME APK
       - name: Build & Rename APK
         run: |
-          ./gradlew assembleRelease
-          mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/${{ steps.info.outputs.apk_name }}
+          if [ "${{ github.event.inputs.type }}" = "nightly" ]; then
+            ./gradlew assembleNightly
+            mv app/build/outputs/apk/nightly/app-nightly.apk app/build/outputs/apk/release/${{ steps.info.outputs.apk_name }}
+          else
+            ./gradlew assembleRelease
+            mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/${{ steps.info.outputs.apk_name }}
+          fi
         env:
           KEYSTORE_FILE: release.keystore
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}

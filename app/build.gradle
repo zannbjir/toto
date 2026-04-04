@@ -47,34 +47,36 @@ android {
                 localProperties.getProperty('tg_backup_bot_token', '')
     }
 
+    // ======= Tambahkan signingConfigs =======
     signingConfigs {
-    release {
-        def keystore = System.getenv("KEYSTORE_FILE")
-        if (keystore != null) {
-            storeFile file(keystore)
+        release {
+            storeFile file(System.getenv("KEYSTORE_FILE"))
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
+        nightly {
+            storeFile file(System.getenv("KEYSTORE_FILE"))
             storePassword System.getenv("KEYSTORE_PASSWORD")
             keyAlias System.getenv("KEY_ALIAS")
             keyPassword System.getenv("KEY_PASSWORD")
         }
     }
-}
 
     buildTypes {
         debug {
             applicationIdSuffix = '.debug'
         }
-
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
-
         nightly {
             initWith release
-            signingConfig null
             applicationIdSuffix = '.nightly'
+            signingConfig signingConfigs.nightly
         }
     }
 

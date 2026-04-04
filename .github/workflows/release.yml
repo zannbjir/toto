@@ -117,14 +117,13 @@ jobs:
         id: release
         uses: softprops/action-gh-release@v2
         with:
+          token: ${{ secrets.MY_GITHUB_TOKEN }} 
           repository: ${{ steps.info.outputs.target_repo }}
           tag_name: ${{ steps.info.outputs.tag }}
           name: ${{ steps.info.outputs.name }}
           body_path: BODY.md
           prerelease: ${{ github.event.inputs.type == 'nightly' }}
           files: app/build/outputs/apk/release/${{ steps.info.outputs.apk_name }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
 # 🔗 SHORTLINK MANUAL
       - name: ShortLink

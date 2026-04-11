@@ -24,8 +24,8 @@ android {
         applicationId 'io.github.toto.kotatsu'
         minSdk = 23
         targetSdk = 36
-        versionCode = 1060
-        versionName = '9.1.1'
+        versionCode = 1065
+        versionName = '9.1.2'
         generatedDensities = []
         testInstrumentationRunner 'org.koitharu.kotatsu.HiltTestRunner'
 
@@ -50,18 +50,15 @@ android {
     // ======= Tambahkan signingConfigs =======
     signingConfigs {
         release {
-            storeFile file(System.getenv("KEYSTORE_FILE"))
-            storePassword System.getenv("KEYSTORE_PASSWORD")
-            keyAlias System.getenv("KEY_ALIAS")
-            keyPassword System.getenv("KEY_PASSWORD")
-        }
-        nightly {
-            storeFile file(System.getenv("KEYSTORE_FILE"))
+        def keystore = System.getenv("KEYSTORE_FILE")
+        if (keystore != null) {
+            storeFile file(keystore)
             storePassword System.getenv("KEYSTORE_PASSWORD")
             keyAlias System.getenv("KEY_ALIAS")
             keyPassword System.getenv("KEY_PASSWORD")
         }
     }
+}
 
     buildTypes {
         debug {
@@ -76,7 +73,7 @@ android {
         nightly {
             initWith release
             applicationIdSuffix = '.nightly'
-            signingConfig signingConfigs.nightly
+            signingConfig signingConfigs.release
         }
     }
 

@@ -88,12 +88,12 @@ jobs:
         run: |
           if [ "${{ github.event.inputs.type }}" = "nightly" ]; then
             ./gradlew assembleNightly
-            # Cari file apk di output nightly, apa pun namanya
+            # Cari file APK di folder nightly, apa pun namanya, lalu pindahkan
             APK_PATH=$(find app/build/outputs/apk/nightly -name "*.apk" | head -n 1)
             mv "$APK_PATH" app/build/outputs/apk/release/${{ steps.info.outputs.apk_name }}
           else
             ./gradlew assembleRelease
-            # Cari file apk di output release, apa pun namanya
+            # Cari file APK di folder release, apa pun namanya, lalu pindahkan
             APK_PATH=$(find app/build/outputs/apk/release -name "*.apk" | head -n 1)
             mv "$APK_PATH" app/build/outputs/apk/release/${{ steps.info.outputs.apk_name }}
           fi

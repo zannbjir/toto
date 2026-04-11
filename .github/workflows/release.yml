@@ -86,6 +86,9 @@ jobs:
 # 🔨 BUILD & RENAME APK
       - name: Build & Rename APK
         run: |
+          # Bikin foldernya dulu biar gak error pas dipindah
+          mkdir -p app/build/outputs/apk/release
+          
           if [ "${{ github.event.inputs.type }}" = "nightly" ]; then
             ./gradlew assembleNightly
             # Cari file APK di folder nightly, apa pun namanya, lalu pindahkan
@@ -102,7 +105,6 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-
 
 # 📏 APK SIZE + DATE
       - name: Get APK Info

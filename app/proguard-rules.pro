@@ -1,12 +1,13 @@
-    -optimizationpasses 8
+-optimizationpasses 8
 -dontobfuscate
+
 -assumenosideeffects class kotlin.jvm.internal.Intrinsics {
-	public static void checkExpressionValueIsNotNull(...);
-	public static void checkNotNullExpressionValue(...);
-	public static void checkReturnedValueIsNotNull(...);
-	public static void checkFieldIsNotNull(...);
-	public static void checkParameterIsNotNull(...);
-	public static void checkNotNullParameter(...);
+    public static void checkExpressionValueIsNotNull(...);
+    public static void checkNotNullExpressionValue(...);
+    public static void checkReturnedValueIsNotNull(...);
+    public static void checkFieldIsNotNull(...);
+    public static void checkParameterIsNotNull(...);
+    public static void checkNotNullParameter(...);
 }
 
 -dontwarn okhttp3.internal.platform.**
@@ -29,5 +30,13 @@
 -keep class org.acra.config.DefaultRetryPolicy { *; }
 -keep class org.acra.attachment.DefaultAttachmentProvider { *; }
 -keep class org.acra.sender.JobSenderService
+
+
 -keep class org.koitharu.kotatsu.parsers.site.** { *; }
 -keepnames class org.koitharu.kotatsu.parsers.site.** { *; }
+
+-keep class org.koitharu.kotatsu.parsers.model.** { *; }
+-keepnames class org.koitharu.kotatsu.parsers.model.** { *; }
+
+-keepattributes *Annotation*, InnerClasses
+-keep class kotlinx.serialization.** { *; }

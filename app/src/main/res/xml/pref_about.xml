@@ -29,9 +29,15 @@
 		android:title="@string/source_code" />
 
 	<Preference
-		android:key="about_app_translation"
+		android:key="tg_report"
 		android:persistent="false"
 		android:summary="@string/url_report"
 		android:title="@string/report_bjir" />
+
+	<Preference
+        android:key="about_whatsapp"
+        android:persistent="false"
+        android:summary="@string/url_whatsapp"
+        android:title="@string/follow_whatsapp" />
 
 </PreferenceScreen>

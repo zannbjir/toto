@@ -1,6 +1,22 @@
+> [!IMPORTANT]
+> **[Yomito](https://github.com/zannbjir/yomito) is a fork of [Kotatsu-Redo](https://github.com/Kotatsu-Redo/Kotatsu-Redo).**
+>
+> **Please don’t ask for new sources or parsers.**
+> **I’m not a parser developer — this fork was made mostly out of spare time and curiosity.**
+
+---
+
 <div align="center">
 
-**[Kotatsu-Redo](https://github.com/Kotatsu-Redo/Kotatsu-Redo) is a free and open-source manga reader for Android with built-in
+<a href="https://github.com/Hynf5/Hitori">
+    <img src="./.idea/yomito.png" alt="Hitori logo" title="Yomito logo" width="170"/>
+</a>
+
+# Yomito
+
+<div align="center">
+
+**[Yomito](https://github.com/zannbjir/yomito) is a free and open-source manga reader for Android with built-in
 online content sources. The main goal of the fork is to maintain existing features and sources.**
 
 ![Android 6.0](https://img.shields.io/badge/android-6.0+-brightgreen) [![Discord](https://img.shields.io/discord/898363402467045416?color=5865f2&label=discord)](https://discord.gg/sfPJSQNxfW) [![License](https://img.shields.io/github/license/KotatsuApp/Kotatsu)](https://github.com/KotatsuApp/Kotatsu/blob/devel/LICENSE)

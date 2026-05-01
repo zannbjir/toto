@@ -57,7 +57,7 @@ jobs:
             echo "apk_name=nightly-app-release.apk" >> $GITHUB_OUTPUT
             echo "notif_title=🌙 TotoGo Nightly Update Available!" >> $GITHUB_OUTPUT
             echo "body_title=🌙 TotoGo Nightly Release" >> $GITHUB_OUTPUT
-            echo "target_repo=zannbjir/toto-malam" >> $GITHUB_OUTPUT
+            echo "target_repo=zannbjir/yomito-malam" >> $GITHUB_OUTPUT
           else
             VER="${{ github.event.inputs.version }}"
             echo "tag=v${VER}" >> $GITHUB_OUTPUT

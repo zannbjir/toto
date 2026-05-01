@@ -75,6 +75,16 @@ class AboutSettingsFragment : BasePreferenceFragment(R.string.about) {
 				true
 			}
 
+			AppSettings.KEY_LINK_WHATSAPP -> {
+                openLink(R.string.url_whatsapp, preference.title)
+                true
+            }
+
+			AppSettings.KEY_LINK_TG_REPORT -> {
+                openLink(R.string.url_report, preference.title)
+                true
+            }
+
 			else -> super.onPreferenceTreeClick(preference)
 		}
 	}

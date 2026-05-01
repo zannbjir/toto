@@ -28,6 +28,7 @@ import org.koitharu.kotatsu.backups.data.model.HistoryBackup
 import org.koitharu.kotatsu.backups.data.model.MangaBackup
 import org.koitharu.kotatsu.backups.data.model.ScrobblingBackup
 import org.koitharu.kotatsu.backups.data.model.SourceBackup
+import org.koitharu.kotatsu.backups.data.model.SourcePresetBackup
 import org.koitharu.kotatsu.backups.data.model.StatisticBackup
 import org.koitharu.kotatsu.backups.domain.BackupSection
 import org.koitharu.kotatsu.core.db.MangaDatabase
@@ -140,6 +141,12 @@ class BackupRepository @Inject constructor(
                         serializer = serializer(),
                     )
                 }
+
+                BackupSection.SOURCE_PRESETS -> output.writeJsonArray(
+                    section = BackupSection.SOURCE_PRESETS,
+                    data = database.getSourcePresetsDao().dump().asFlow().map { SourcePresetBackup(it) },
+                    serializer = serializer(),
+                )
             }
             progress?.emit(commonProgress)
             commonProgress++
@@ -206,6 +213,10 @@ class BackupRepository @Inject constructor(
                         .restoreWithoutTransaction {
                             savedFiltersRepository.save(it)
                         }
+
+                    BackupSection.SOURCE_PRESETS -> input.readJsonArray<SourcePresetBackup>(serializer()).restoreToDb {
+                        getSourcePresetsDao().upsert(it.toEntity())
+                    }
 
                     null -> CompositeResult.EMPTY // skip unknown entries
                 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name" translatable="false">TotoGo</string>
+    <string name="app_name" translatable="false">Yomito</string>
     <string name="local_storage">Local storage</string>
     <string name="favourites">Favorites</string>
     <string name="history">History</string>
@@ -903,7 +903,6 @@
     <string name="test_parser">Test manga source</string>
     <string name="rename">Rename</string>
     <string name="save_filter">Save filter</string>
-    <string name="url_report">https://tg.foo.ng/report</string>
     <string name="overwrite">Overwrite</string>
     <string name="filter_overwrite_confirm">A filter named \"%s\" already exists. Do you want to overwrite it?</string>
     <string name="storage_and_network">Storage and network</string>
@@ -936,6 +935,7 @@
 	<string name="no_presets_text">Create a preset to quickly switch between different source configurations</string>
 	<string name="select_languages">Select languages</string>
 	<string name="manage_preset_sources">Manage sources</string>
+    <string name="follow_whatsapp">Follow WhatsApp Channel</string>
 	<string name="default_sources">Default</string>
 </resources>
 

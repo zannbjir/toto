@@ -92,7 +92,7 @@
 
 				<data android:scheme="http" />
 				<data android:scheme="https" />
-				<data android:host="tg.foo.ng" />
+				<data android:host="yomito.wibu.life" />
 				<data android:path="/manga" />
 			</intent-filter>
 			<intent-filter>
@@ -103,7 +103,7 @@
 
 				<data android:scheme="kotatsu" />
 				<data android:host="manga" />
-				<data android:host="tg.foo.ng" />
+				<data android:host="yomito.wibu.life" />
 			</intent-filter>
 		</activity>
 		<activity

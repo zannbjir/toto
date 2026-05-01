@@ -26,7 +26,7 @@ class MangaLinkResolver @Inject constructor(
 ) {
 
 	suspend fun resolve(uri: Uri): Manga {
-		return if (uri.scheme == "kotatsu" || uri.host == "tg.foo.ng") {
+		return if (uri.scheme == "kotatsu" || uri.host == "yomito.wibu.life") {
 			resolveAppLink(uri)
 		} else {
 			resolveExternalLink(uri.toString())

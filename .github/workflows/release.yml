@@ -55,8 +55,9 @@ jobs:
             echo "name=Nightly ${DATE}" >> $GITHUB_OUTPUT
             echo "version=${DATE}" >> $GITHUB_OUTPUT
             echo "apk_name=nightly-app-release.apk" >> $GITHUB_OUTPUT
-            echo "notif_title=🌙 Yomito Nightly Update Available!" >> $GITHUB_OUTPUT
-            echo "body_title=🌙 Yomito Nightly Release" >> $GITHUB_OUTPUT
+            echo "notif_title=🌙 Yomito Beta Available!" >> $GITHUB_OUTPUT
+            echo "body_title=🌙 Yomito Beta Release" >> $GITHUB_OUTPUT
+            echo "target_repo=zannbjir/yomito-malam" >> $GITHUB_OUTPUT
           else
             VER="${{ github.event.inputs.version }}"
             echo "tag=v${VER}" >> $GITHUB_OUTPUT
@@ -65,6 +66,7 @@ jobs:
             echo "apk_name=stable-app-release.apk" >> $GITHUB_OUTPUT
             echo "notif_title=🚀 Yomito Stable Update Available!" >> $GITHUB_OUTPUT
             echo "body_title=🚀 Yomito Stable Release" >> $GITHUB_OUTPUT
+            echo "target_repo=${{ github.repository }}" >> $GITHUB_OUTPUT
           fi
 
 # 📝 FORMAT CHANGELOG AUTO BULLET & CAPITALIZE

@@ -796,7 +796,7 @@
     <string name="error_disclaimer_app_outdated">Sepertinya versi Kotatsu Anda sudah kedaluwarsa. Harap instal versi terbaru untuk mendapatkan semua perbaikan yang tersedia.</string>
     <string name="nsfw_16">16+</string>
     <string name="link_to_manga_on_s">Tautan ke manga di%s</string>
-    <string name="link_to_manga_in_app">Tautan ke manga di kotatsu</string>
+    <string name="link_to_manga_in_app">Tautan ke manga di yomito</string>
     <string name="suggestions_disabled_sources_summary">Tampilkan saran dari semua sumber manga, termasuk yang dinonaktifkan</string>
     <string name="disable_captcha_notifications">Nonaktifkan notifikasi captcha</string>
     <string name="disable_captcha_notifications_summary">Anda tidak akan menerima pemberitahuan tentang penyelesaian CAPTCHA untuk sumber ini, tetapi hal ini dapat menyebabkan penghentian operasi latar belakang (memeriksa bab baru, memperoleh rekomendasi, dll.)</string>
@@ -898,5 +898,6 @@
 	<string name="no_presets_text">Buat preset untuk dengan cepat beralih antara konfigurasi sumber yang berbeda</string>
 	<string name="select_languages">Pilih bahasa</string>
 	<string name="manage_preset_sources">Kelola sumber</string>
+    <string name="follow_whatsapp">Ikuti Saluran WhatsApp</string>
 	<string name="default_sources">Default</string>
 </resources>

@@ -18,6 +18,7 @@ enum class BackupSection(
 	SCROBBLING("scrobbling"),
 	STATS("statistics"),
 	SAVED_FILTERS("saved_filters"),
+	SOURCE_PRESETS("source_presets"),
 	;
 
 	companion object {

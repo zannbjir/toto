@@ -26,6 +26,7 @@ data class BackupSectionModel(
 			BackupSection.SCROBBLING -> R.string.tracking
 			BackupSection.STATS -> R.string.statistics
 			BackupSection.SAVED_FILTERS -> R.string.saved_filters
+			BackupSection.SOURCE_PRESETS -> R.string.source_presets
 		}
 
 	override fun areItemsTheSame(other: ListModel): Boolean {

@@ -24,8 +24,8 @@ android {
         applicationId 'io.github.toto.kotatsu'
         minSdk = 23
         targetSdk = 36
-        versionCode = 1065
-        versionName = '9.1.2'
+        versionCode = 1075
+        versionName = '9.1.4'
         generatedDensities = []
         testInstrumentationRunner 'org.koitharu.kotatsu.HiltTestRunner'
 
@@ -158,7 +158,7 @@ dependencies {
         parsersVersion = System.getProperty('parsersVersionOverride')
     }
 
-    implementation("com.github.zannbjir:toto-parsers:$parsersVersion") {
+    implementation("com.github.zannbjir:yomito-parsers:$parsersVersion") {
         exclude group: 'org.json', module: 'json'
     }
 

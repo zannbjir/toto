@@ -8,7 +8,7 @@
 
 <div align="center">
 
-<a href="https://github.com/Hynf5/Hitori">
+<a href="https://github.com/zannbjir/yomito">
     <img src="./.idea/yomito.png" alt="Yomito logo" title="Yomito logo" width="170"/>
 </a>
 

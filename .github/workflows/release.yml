@@ -55,8 +55,8 @@ jobs:
             echo "name=Nightly ${DATE}" >> $GITHUB_OUTPUT
             echo "version=${DATE}" >> $GITHUB_OUTPUT
             echo "apk_name=nightly-app-release.apk" >> $GITHUB_OUTPUT
-            echo "notif_title=🌙 TotoGo Nightly Update Available!" >> $GITHUB_OUTPUT
-            echo "body_title=🌙 TotoGo Nightly Release" >> $GITHUB_OUTPUT
+            echo "notif_title=🌙 Yomito Beta Update Available!" >> $GITHUB_OUTPUT
+            echo "body_title=🌙 Yomito Beta Release" >> $GITHUB_OUTPUT
             echo "target_repo=zannbjir/yomito-malam" >> $GITHUB_OUTPUT
           else
             VER="${{ github.event.inputs.version }}"
@@ -64,8 +64,8 @@ jobs:
             echo "name=Stable v${VER}" >> $GITHUB_OUTPUT
             echo "version=v${VER}" >> $GITHUB_OUTPUT
             echo "apk_name=stable-app-release.apk" >> $GITHUB_OUTPUT
-            echo "notif_title=🚀 TotoGo Stable Update Available!" >> $GITHUB_OUTPUT
-            echo "body_title=🚀 TotoGo Stable Release" >> $GITHUB_OUTPUT
+            echo "notif_title=🚀 Yomito Stable Update Available!" >> $GITHUB_OUTPUT
+            echo "body_title=🚀 Yomito Stable Release" >> $GITHUB_OUTPUT
             echo "target_repo=${{ github.repository }}" >> $GITHUB_OUTPUT
           fi
 

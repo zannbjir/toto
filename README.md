@@ -9,7 +9,7 @@
 <div align="center">
 
 <a href="https://github.com/Hynf5/Hitori">
-    <img src="./.idea/yomito.png" alt="Hitori logo" title="Yomito logo" width="170"/>
+    <img src="./.idea/yomito.png" alt="Yomito logo" title="Yomito logo" width="170"/>
 </a>
 
 # Yomito

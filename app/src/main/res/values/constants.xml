@@ -5,7 +5,7 @@
 	<string name="url_weblate" translatable="false">https://hosted.weblate.org/engage/kotatsu</string>
 	<string name="url_user_manual" translatable="false">https://kotatsu.app/manuals/guides/getting-started/</string>
 	<string name="url_error_report" translatable="false">https://bugs.kotatsu.app/report</string>
-	<string name="url_report">https://yomito.wibu.life/report</string>
+	<string name="url_report">https://yomito.foo.ng/report</string>
 	<string name="url_whatsapp" translatable="false">https://s.id/yomito-wa</string>
 	<string name="account_type_sync" translatable="false">org.kotatsu.sync</string>
 	<string name="github_updates_repo" translatable="false">zannbjir/yomito</string>

@@ -141,7 +141,7 @@ jobs:
             - name: ShortLink
               id: short
               run: |
-                  SHORT="https://yomito.wibu.life/download/"
+                  SHORT="https://yomito.foo.ng/download/"
                   echo "url=$SHORT" >> $GITHUB_OUTPUT
 
             # 💬 DISCORD EMBED

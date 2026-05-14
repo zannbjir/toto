@@ -209,6 +209,14 @@ class AppSettings @Inject constructor(@ApplicationContext context: Context) {
 	val trackerDownloadStrategy: TrackerDownloadStrategy
 		get() = prefs.getEnumValue(KEY_TRACKER_DOWNLOAD, TrackerDownloadStrategy.DISABLED)
 
+	var isTrackerUnstuckMigrationDone: Boolean
+		get() = prefs.getBoolean(KEY_TRACKER_UNSTUCK_MIGRATION_V3, false)
+		set(value) = prefs.edit { putBoolean(KEY_TRACKER_UNSTUCK_MIGRATION_V3, value) }
+
+	var isTrackerProgressRefreshDone: Boolean
+		get() = prefs.getBoolean(KEY_TRACKER_PROGRESS_REFRESH_V1, false)
+		set(value) = prefs.edit { putBoolean(KEY_TRACKER_PROGRESS_REFRESH_V1, value) }
+
 	var notificationSound: Uri
 		get() = prefs.getString(KEY_NOTIFICATIONS_SOUND, null)?.toUriOrNull()
 			?: Settings.System.DEFAULT_NOTIFICATION_URI
@@ -359,9 +367,6 @@ class AppSettings @Inject constructor(@ApplicationContext context: Context) {
 
 	val screenshotsPolicy: ScreenshotsPolicy
 		get() = prefs.getEnumValue(KEY_SCREENSHOTS_POLICY, ScreenshotsPolicy.ALLOW)
-
-	val isAdBlockEnabled: Boolean
-		get() = prefs.getBoolean(KEY_ADBLOCK, false)
 
 	var userSpecifiedMangaDirectories: Set<File>
 		get() {
@@ -707,7 +712,6 @@ class AppSettings @Inject constructor(@ApplicationContext context: Context) {
 		const val TRACK_HISTORY = "history"
 		const val TRACK_FAVOURITES = "favourites"
 
-		const val KEY_ADBLOCK = "adblock"
 		const val KEY_LIST_MODE = "list_mode_2"
 		const val KEY_LIST_MODE_HISTORY = "list_mode_history"
 		const val KEY_LIST_MODE_FAVORITES = "list_mode_favorites"
@@ -747,6 +751,8 @@ class AppSettings @Inject constructor(@ApplicationContext context: Context) {
 		const val KEY_TRACKER_NOTIFICATIONS = "tracker_notifications"
 		const val KEY_TRACKER_NO_NSFW = "tracker_no_nsfw"
 		const val KEY_TRACKER_DOWNLOAD = "tracker_download"
+		const val KEY_TRACKER_UNSTUCK_MIGRATION_V3 = "tracker_unstuck_migration_v3"
+		const val KEY_TRACKER_PROGRESS_REFRESH_V1 = "tracker_progress_refresh_v1"
 		const val KEY_NOTIFICATIONS_SETTINGS = "notifications_settings"
 		const val KEY_NOTIFICATIONS_SOUND = "notifications_sound"
 		const val KEY_NOTIFICATIONS_VIBRATE = "notifications_vibrate"

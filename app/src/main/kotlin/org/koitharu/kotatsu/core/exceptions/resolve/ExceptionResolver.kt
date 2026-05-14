@@ -45,6 +45,8 @@ import kotlin.coroutines.suspendCoroutine
 class ExceptionResolver private constructor(
     private val host: Host,
     private val settings: AppSettings,
+    private val captchaHandler: CaptchaHandler,
+    private val captchaCoordinator: CaptchaAutoResolveCoordinator,
     private val scrobblerAuthHelperProvider: Provider<ScrobblerAuthHelper>,
 ) {
     private val continuations = MutableScatterMap<String, Continuation<Boolean>>(1)
@@ -63,9 +65,9 @@ class ExceptionResolver private constructor(
         host.router.showErrorDialog(e, url)
     }
 
-    suspend fun resolve(e: Throwable): Boolean = host.lifecycleScope.async {
+    suspend fun resolve(e: Throwable, tryAutoResolve: Boolean = true): Boolean = host.lifecycleScope.async {
         when (e) {
-            is CloudFlareProtectedException -> resolveCF(e)
+            is CloudFlareProtectedException -> resolveCF(e, tryAutoResolve)
             is AuthRequiredException -> resolveAuthException(e.source)
             is SSLException,
             is CertPathValidatorException -> {
@@ -123,9 +125,20 @@ class ExceptionResolver private constructor(
         browserActionContract.launch(e)
     }
 
-    private suspend fun resolveCF(e: CloudFlareProtectedException): Boolean = suspendCoroutine { cont ->
-        continuations[CloudFlareActivity.TAG] = cont
-        cloudflareContract.launch(e)
+   private suspend fun resolveCF(e: CloudFlareProtectedException, tryAutoResolve: Boolean): Boolean {
+        if (tryAutoResolve) {
+            host.withContext {
+                Toast.makeText(this, R.string.captcha_solving, Toast.LENGTH_LONG).show()
+            }
+            // Delegated to the singleton coordinator: it owns the activity lifecycle, so the result
+            // is delivered even if this Fragment / Activity dies while CloudFlareActivity is still
+            // running. Same-source duplicate calls await the in-flight resolve.
+            return captchaCoordinator.resolve(e.source, e)
+        }
+        return suspendCoroutine { cont ->
+            continuations[CloudFlareActivity.TAG] = cont
+            cloudflareContract.launch(e)
+        }
     }
 
     private suspend fun resolveAuthException(source: MangaSource): Boolean = suspendCoroutine { cont ->
@@ -165,18 +178,24 @@ class ExceptionResolver private constructor(
 
     class Factory @Inject constructor(
         private val settings: AppSettings,
+        private val captchaHandler: CaptchaHandler,
+        private val captchaCoordinator: CaptchaAutoResolveCoordinator,
         private val scrobblerAuthHelperProvider: Provider<ScrobblerAuthHelper>,
     ) {
 
         fun create(fragment: Fragment) = ExceptionResolver(
             host = Host.FragmentHost(fragment),
             settings = settings,
+            captchaHandler = captchaHandler,
+            captchaCoordinator = captchaCoordinator,
             scrobblerAuthHelperProvider = scrobblerAuthHelperProvider,
         )
 
         fun create(activity: FragmentActivity) = ExceptionResolver(
             host = Host.ActivityHost(activity),
             settings = settings,
+            captchaHandler = captchaHandler,
+            captchaCoordinator = captchaCoordinator,
             scrobblerAuthHelperProvider = scrobblerAuthHelperProvider,
         )
     }

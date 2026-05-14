@@ -125,6 +125,7 @@
     <string name="silent">Diam</string>
     <string name="captcha_required">CAPTCHA diperlukan</string>
     <string name="captcha_solve">Selesaikan</string>
+    <string name="captcha_solving">Menyelesaikan captcha secara otomatis…</string>
     <string name="clear_cookies">Bersihkan kuki</string>
     <string name="cookies_cleared">Semua kuki telah dihapus</string>
     <string name="clear_feed">Bersihkan umpan</string>
@@ -801,6 +802,8 @@
     <string name="suggestions_disabled_sources_summary">Tampilkan saran dari semua sumber manga, termasuk yang dinonaktifkan</string>
     <string name="disable_captcha_notifications">Nonaktifkan notifikasi captcha</string>
     <string name="disable_captcha_notifications_summary">Anda tidak akan menerima pemberitahuan tentang penyelesaian CAPTCHA untuk sumber ini, tetapi hal ini dapat menyebabkan penghentian operasi latar belakang (memeriksa bab baru, memperoleh rekomendasi, dll.)</string>
+    <string name="disable_captcha_auto_solve">Nonaktifkan penyelesaian CAPTCHA otomatis</string>
+    <string name="disable_captcha_auto_solve_summary">Jangan coba menyelesaikan CAPTCHA secara diam-diam di latar belakang. Anda akan diminta untuk menyelesaikannya secara manual sebagai gantinya.</string>
     <string name="global_search">Pencarian global</string>
     <string name="search_everywhere">Cari dimana saja</string>
     <string name="badges_in_lists">Lencana dalam daftar</string>
@@ -812,7 +815,6 @@
     <string name="theme_name_expressive">Ekspresif (Test)</string>
     <string name="page_switch_timer">Halaman akan berganti setiap ~%d detik</string>
     <string name="expand">Memperluas</string>
-    <string name="adblock">Blokir iklan di browser</string>
     <string name="dont_ask_again">Jangan bertanya lagi</string>
     <string name="incognito_for_nsfw">Mode penyamaran untuk manga NSFW</string>
     <string name="incognito_mode_hint_nsfw">Manga ini mungkin mengandung konten dewasa. Apakah Anda ingin menggunakan mode penyamaran?</string>
@@ -825,7 +827,6 @@
     <string name="reader_multitask_summary">Memungkinkan anda untuk tetap membuka beberapa \"pembaca\" dengan manga yang berbeda pada saat yang sama</string>
     <string name="manga_override_hint">Perubahan ini akan memengaruhi cara manga ditampilkan di aplikasi</string>
     <string name="additional_action_required">Tindakan tambahan diperlukan</string>
-    <string name="adblock_summary">Blokir iklan di browser bawaan (beta)</string>
     <string name="theme_name_totoro">Totoro</string>
     <string name="theme_name_itsuka">Itsuka</string>
     <string name="reader_multitask">Buka pembaca secara terpisah</string>

@@ -144,6 +144,11 @@ abstract class MangaListFragment :
 		return insets.consumeAll(typeMask)
 	}
 
+	override fun onResume() {
+        super.onResume()
+        listAdapter?.notifyDataSetChanged()
+    }
+
 	override fun onDestroyView() {
 		listAdapter = null
 		paginationListener = null

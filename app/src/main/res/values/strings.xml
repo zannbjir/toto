@@ -531,6 +531,13 @@
     <string name="state_paused">Paused</string>
     <string name="reader_optimize">Reduce memory consumption (beta)</string>
     <string name="reader_optimize_summary">Reduce offscreen pages quality to use less memory</string>
+    <string name="e_ink">E-Ink</string>
+    <string name="flash_on_page_change">Flash on page change</string>
+    <string name="flash_on_page_change_summary">Refresh the screen with a short full-screen flash to reduce ghosting on E-Ink displays</string>
+    <string name="flash_duration">Flash duration</string>
+    <string name="flash_every">Flash every</string>
+    <string name="flash_with">Flash with</string>
+    <string name="milliseconds_pattern">%1$d ms</string>
     <string name="state">State</string>
     <string name="error_multiple_genres_not_supported">Filtering by multiple genres is not supported by this manga source</string>
     <string name="error_multiple_states_not_supported">Filtering by multiple states is not supported by this manga source</string>
@@ -936,6 +943,32 @@
 	<string name="no_presets_text">Create a preset to quickly switch between different source configurations</string>
 	<string name="select_languages">Select languages</string>
 	<string name="manage_preset_sources">Manage sources</string>
+    <string name="text_inside_cover_title">Text Inside Cover</string>
+    <string name="text_inside_cover_summary">Show manga title inside the cover image on grid views.</string>
+    <string name="widget_continue_reading">Continue Reading</string>
+    <string name="widget_continue_reading_description">Resume your last-read manga in one tap</string>
+    <string name="widget_continue_reading_empty">No reading history yet</string>
+    <string name="widget_continue_reading_open">Open</string>
+    <string name="widget_chapter_progress">Ch. %1$d / %2$d</string>
+    <string name="widget_chapter_position">%1$d / %2$d</string>
+    <string name="widget_progress_percent" translatable="false">%1$d%%</string>
+    <string name="widget_stats">Reading Statistics</string>
+    <string name="widget_stats_description">Track your reading time and streak</string>
+    <string name="widget_stats_empty">Start reading to see stats</string>
+    <string name="widget_stats_today">Today</string>
+    <string name="widget_stats_week">Last 7 days</string>
+    <string name="widget_stats_minutes_short">%1$d min</string>
+    <string name="widget_stats_hours_short">%1$dh %2$dm</string>
+    <string name="widget_favorites">Favorites</string>
+    <string name="widget_favorites_description">Pin up to 3 favorite manga to your home screen</string>
+    <string name="widget_favorites_empty">Tap a slot to pin a favorite</string>
+    <string name="widget_favorites_configure">Choose pinned favorites</string>
+    <string name="widget_favorites_config_title">Pin favorites</string>
+    <string name="widget_favorites_no_favorites">No favorites yet. Add some manga to your favorites first.</string>
+    <string name="widget_favorites_pin_counter">%1$d / %2$d pinned</string>
+    <string name="widget_favorites_limit_reached">You can pin up to %1$d favorites</string>
+    <string name="widget_refresh">Refresh</string>
+    <string name="widget_cover_content_description">Manga cover</string>
     <string name="follow_whatsapp">Follow WhatsApp Channel</string>
 	<string name="default_sources">Default</string>
 </resources>

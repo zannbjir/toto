@@ -40,9 +40,9 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -78,6 +78,7 @@ import org.koitharu.kotatsu.search.ui.suggestion.SearchSuggestionListenerImpl
 import org.koitharu.kotatsu.search.ui.suggestion.SearchSuggestionMenuProvider
 import org.koitharu.kotatsu.search.ui.suggestion.SearchSuggestionViewModel
 import org.koitharu.kotatsu.search.ui.suggestion.adapter.SearchSuggestionAdapter
+import org.koitharu.kotatsu.widget.continuereading.ContinueReadingWidget
 import javax.inject.Inject
 import com.google.android.material.R as materialR
 
@@ -150,19 +151,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), AppBarOwner, BottomNav
 		viewModel.isLoading.observe(this, this::onLoadingStateChanged)
 		viewModel.isResumeEnabled.observe(this, this::onResumeEnabledChanged)
 		viewModel.feedCounter.observe(this, ::onFeedCounterChanged)
-        viewModel.appUpdate.observe(this, MenuInvalidator(this))
-        viewModel.appUpdate.observe(this) { update ->
-            if (update != null) {
-                val prefs = getSharedPreferences("kotatsu_update_prefs", MODE_PRIVATE)
-                val lastPopupTime = prefs.getLong("last_update_popup", 0)
-                val currentTime = System.currentTimeMillis()
-
-                if (currentTime - lastPopupTime > 3600000L) {
-                    router.openAppUpdate()
-                    prefs.edit().putLong("last_update_popup", currentTime).apply()
-                }
-            }
-        }
+		viewModel.appUpdate.observe(this, MenuInvalidator(this))
 		viewModel.onFirstStart.observeEvent(this) { router.showWelcomeSheet() }
 		viewModel.isBottomNavPinned.observe(this, ::setNavbarPinned)
 		settings.observe(AppSettings.KEY_FLOATING_NAV).onEach {
@@ -173,6 +162,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), AppBarOwner, BottomNav
 		viewBinding.bottomNav?.addOnLayoutChangeListener(this)
 		viewBinding.searchView.addTransitionListener(this)
 		viewBinding.searchView.addTransitionListener(exitCallback)
+		lifecycleScope.launch {
+			withResumed {
+				ContinueReadingWidget.nudgeAll(this@MainActivity)
+			}
+		}
+
 		initSearch()
 	}
 

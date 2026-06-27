@@ -265,6 +265,36 @@
 		<item name="android:lineHeight" tools:ignore="NewApi">14sp</item>
 	</style>
 
+	<!-- Grid-cover titles are overlaid on a dark scrim, so they are light with a soft shadow.
+	     Used only by the manga grid card (applied via ItemSizeResolver). -->
+	<style name="TextAppearance.Kotatsu.GridTitle.Overlay">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">#B0000000</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowRadius">4</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineSpacingExtra">-2sp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+	<style name="TextAppearance.Kotatsu.GridTitle.Small.Overlay">
+		<item name="android:textColor">@android:color/white</item>
+		<item name="android:shadowColor">#80000000</item>
+		<item name="android:shadowDx">0</item>
+		<item name="android:shadowDy">1</item>
+		<item name="android:shadowRadius">3</item>
+	</style>
+
+	<!-- Shapes -->
+
+	<!-- PixelPlayer M3 shape scale: small=8dp, medium=16dp, large=24dp -->
+	<style name="ShapeAppearance.Kotatsu.CornerSmall" parent="ShapeAppearance.Material3.Corner.Small">
+		<item name="cornerSize">8dp</item>
+	</style>
+
+
 	<!-- Shapes -->
 
 	<style name="ShapeAppearanceOverlay.Kotatsu.Cover" parent="">
@@ -278,6 +308,11 @@
 	<style name="ShapeAppearanceOverlay.Kotatsu.Cover.Small" parent="">
 		<item name="cornerSize">4dp</item>
 	</style>
+
+	<style name="ShapeAppearanceOverlay.Kotatsu.Cover.Large" parent="">
+		<item name="cornerSize">18dp</item>
+	</style>
+
 
 	<style name="ShapeAppearanceOverlay.Kotatsu.Circle" parent="">
 		<item name="cornerFamily">rounded</item>

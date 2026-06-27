@@ -34,10 +34,4 @@
 		android:summary="@string/url_report"
 		android:title="@string/report_bjir" />
 
-	<Preference
-        android:key="about_whatsapp"
-        android:persistent="false"
-        android:summary="@string/url_whatsapp"
-        android:title="@string/follow_whatsapp" />
-
 </PreferenceScreen>

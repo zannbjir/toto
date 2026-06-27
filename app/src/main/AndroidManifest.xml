@@ -469,6 +469,23 @@
 			</intent-filter>
 		</receiver>
 
+		<!-- Home screen widgets -->
+		<receiver
+			android:name="org.koitharu.kotatsu.widget.continuereading.ContinueReadingWidget"
+			android:exported="true"
+			android:label="@string/widget_continue_reading">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+				<action android:name="android.intent.action.BOOT_COMPLETED" />
+				<action android:name="android.intent.action.CONFIGURATION_CHANGED" />
+				<action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+				<action android:name="org.koitharu.kotatsu.widget.continuereading.REFRESH" />
+			</intent-filter>
+			<meta-data
+				android:name="android.appwidget.provider"
+				android:resource="@xml/widget_continue_reading" />
+		</receiver>
+
 		<meta-data
 			android:name="android.webkit.WebView.EnableSafeBrowsing"
 			android:value="false" />

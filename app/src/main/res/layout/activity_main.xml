@@ -5,6 +5,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:clipToPadding="false"
 	tools:context=".main.ui.MainActivity">
 
 	<androidx.fragment.app.FragmentContainerView
@@ -79,6 +80,12 @@
 		tools:ignore="InconsistentLayout"
 		tools:visibility="visible" />
 
+	<!--
+		Layout params di sini adalah default (non-floating).
+		Saat isFloating = true, applyFloatingStyle() di SlidingBottomNavigationView.kt
+		akan otomatis mengubah width → wrap_content, gravity → center|bottom,
+		dan menambahkan margin horizontal 24dp + bottom 16dp secara programatik.
+	-->
 	<org.koitharu.kotatsu.core.ui.widgets.SlidingBottomNavigationView
 		android:id="@+id/bottomNav"
 		android:layout_width="match_parent"

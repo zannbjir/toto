@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Material 3 Expressive carousel item: a MaskableFrameLayout (required so the
+     CarouselLayoutManager can mask/unmask it on scroll) styled as a rounded poster card
+     with a full-bleed cover and the title beneath it. -->
+<com.google.android.material.carousel.MaskableFrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:id="@+id/carousel_item"
+	android:layout_width="190dp"
+	android:layout_height="match_parent"
+	android:layout_marginStart="4dp"
+	android:layout_marginEnd="4dp"
+	android:background="?attr/colorSurfaceContainer"
+	android:foreground="?attr/selectableItemBackground"
+	app:shapeAppearance="?attr/shapeAppearanceCornerExtraLarge">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
+
+		<FrameLayout
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
+
+			<org.koitharu.kotatsu.image.ui.CoverImageView
+				android:id="@+id/imageView_cover"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:background="?colorSurfaceContainer"
+				android:scaleType="centerCrop"
+				app:allowRgb565="true"
+				app:aspectRationHeight="0"
+				app:aspectRationWidth="0"
+				tools:ignore="ContentDescription"
+				tools:src="@tools:sample/backgrounds/scenic[5]" />
+
+			<org.koitharu.kotatsu.history.ui.util.ReadingProgressView
+				android:id="@+id/progressView"
+				android:layout_width="@dimen/card_indicator_size"
+				android:layout_height="@dimen/card_indicator_size"
+				android:layout_gravity="bottom|end"
+				android:layout_margin="@dimen/card_indicator_offset" />
+
+			<org.koitharu.kotatsu.core.ui.widgets.IconsView
+				android:id="@+id/iconsView"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="top|start"
+				android:layout_margin="10dp"
+				android:background="@drawable/bg_list_icons"
+				android:orientation="horizontal"
+				android:padding="4dp"
+				app:iconSize="14dp"
+				app:iconSpacing="4dp" />
+
+			<org.koitharu.kotatsu.core.ui.widgets.BadgeView
+				android:id="@+id/badge"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="top|end"
+				android:layout_margin="@dimen/margin_small"
+				android:visibility="gone"
+				app:maxCharacterCount="@integer/manga_badge_max_character_count"
+				tools:number="8"
+				tools:visibility="visible" />
+
+		</FrameLayout>
+
+		<TextView
+			android:id="@+id/textView_title"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:elegantTextHeight="false"
+			android:ellipsize="end"
+			android:maxLines="1"
+			android:paddingHorizontal="14dp"
+			android:paddingVertical="10dp"
+			android:textAppearance="?attr/textAppearanceTitleSmall"
+			android:textColor="?android:attr/textColorPrimary"
+			tools:text="@tools:sample/lorem" />
+
+	</LinearLayout>
+
+</com.google.android.material.carousel.MaskableFrameLayout>

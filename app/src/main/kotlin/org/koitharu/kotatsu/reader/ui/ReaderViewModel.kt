@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.plus
@@ -31,6 +32,8 @@ import org.koitharu.kotatsu.core.model.MangaHistory
 import org.koitharu.kotatsu.bookmarks.domain.Bookmark
 import org.koitharu.kotatsu.bookmarks.domain.BookmarksRepository
 import org.koitharu.kotatsu.core.exceptions.EmptyMangaException
+import org.koitharu.kotatsu.core.exceptions.CloudFlareProtectedException
+import org.koitharu.kotatsu.core.exceptions.resolve.CaptchaAutoResolveCoordinator
 import org.koitharu.kotatsu.core.model.getPreferredBranch
 import org.koitharu.kotatsu.core.nav.MangaIntent
 import org.koitharu.kotatsu.core.nav.ReaderIntent
@@ -44,6 +47,7 @@ import org.koitharu.kotatsu.core.prefs.observeAsStateFlow
 import org.koitharu.kotatsu.core.util.ext.MutableEventFlow
 import org.koitharu.kotatsu.core.util.ext.call
 import org.koitharu.kotatsu.core.util.ext.firstNotNull
+import org.koitharu.kotatsu.core.util.ext.findCloudFlareException
 import org.koitharu.kotatsu.core.util.ext.requireValue
 import org.koitharu.kotatsu.details.data.MangaDetails
 import org.koitharu.kotatsu.details.domain.DetailsInteractor
@@ -78,9 +82,11 @@ import javax.inject.Inject
 
 private const val BOUNDS_PAGE_OFFSET = 2
 private const val PREFETCH_LIMIT = 10
+private const val MAX_DETAILS_VERIFICATION_RETRIES = 2L
 
 @HiltViewModel
 class ReaderViewModel @Inject constructor(
+    private val captchaAutoResolveCoordinator: CaptchaAutoResolveCoordinator,
     private val savedStateHandle: SavedStateHandle,
     private val dataRepository: MangaDataRepository,
     private val historyRepository: HistoryRepository,
@@ -414,7 +420,13 @@ class ReaderViewModel @Inject constructor(
             var exception: Exception? = null
             var loadedDetails: MangaDetails? = null
             try {
+                intent.manga?.source?.let { captchaAutoResolveCoordinator.awaitActiveResolve(it) }
                 detailsLoadUseCase(intent, force = false)
+                .retryWhen { cause, attempt ->
+                        val cf = cause.findCloudFlareException()
+                        attempt < MAX_DETAILS_VERIFICATION_RETRIES && cf is CloudFlareProtectedException &&
+                            captchaAutoResolveCoordinator.resolveIfEnabled(cf)
+                    }
                     .collect { details ->
                         loadedDetails = details
                         if (mangaDetails.value == null) {
@@ -626,6 +638,20 @@ class ReaderViewModel @Inject constructor(
     ): ReaderState? {
         val newChapters = trackingRepository.getNewChaptersCount(manga.id)
         if (newChapters <= 0) {
+            return null
+        }
+        // Auto-jump only on the first open after the new chapters were detected.
+        // The saved percent counts the page currently on screen as read, so a position
+        // on a chapter's last page — or anywhere inside a single-page long-strip
+        // chapter — is indistinguishable from a finished chapter. Once the user has
+        // read anything after the detection, their exact saved position must win;
+        // otherwise every reopen silently advances one more chapter.
+        val detectedAt = trackingRepository.getLastUpdateTime(manga.id)
+        if (detectedAt <= 0L || history.updatedAt.toEpochMilli() >= detectedAt) {
+            return null
+        }
+        if (history.scroll > 0) {
+            // Mid-page scroll position (webtoon strip) would be discarded by the jump
             return null
         }
         val chapters = manga.getChapters(historyChapter.branch)

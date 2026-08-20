@@ -36,6 +36,7 @@ import okhttp3.Request
 import okio.use
 import org.jetbrains.annotations.Blocking
 import org.koitharu.kotatsu.core.LocalizedAppContext
+import org.koitharu.kotatsu.core.exceptions.resolve.CaptchaAutoResolveCoordinator
 import org.koitharu.kotatsu.core.image.BitmapDecoderCompat
 import org.koitharu.kotatsu.core.network.CommonHeaders
 import org.koitharu.kotatsu.core.network.MangaHttpClient
@@ -91,6 +92,7 @@ class PageLoader @Inject constructor(
 	private val mangaRepositoryFactory: MangaRepository.Factory,
 	private val imageProxyInterceptor: ImageProxyInterceptor,
 	private val downloadSlowdownDispatcher: DownloadSlowdownDispatcher,
+	private val captchaAutoResolveCoordinator: CaptchaAutoResolveCoordinator,
 ) {
 
 	val loaderScope = lifecycle.lifecycleScope + InternalErrorHandler() + Dispatchers.Default
@@ -280,6 +282,20 @@ class PageLoader @Inject constructor(
 		isPrefetch: Boolean,
 		skipCache: Boolean,
 	): Uri = semaphore.withPermit {
+		captchaAutoResolveCoordinator.runWithVerification(
+			source = page.source,
+			mayStartVerification = !isPrefetch,
+		) {
+			loadPageAttempt(page, progress, isPrefetch, skipCache)
+		}
+	}
+
+	private suspend fun loadPageAttempt(
+		page: MangaPage,
+		progress: MutableStateFlow<Float>,
+		isPrefetch: Boolean,
+		skipCache: Boolean,
+	): Uri {
 		val pageUrl = getPageUrl(page)
 		check(pageUrl.isNotBlank()) { "Cannot obtain full image url for $page" }
 		if (!skipCache) {

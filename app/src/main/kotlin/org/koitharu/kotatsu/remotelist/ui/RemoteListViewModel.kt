@@ -83,6 +83,7 @@ open class RemoteListViewModel @Inject constructor(
 	private val isResolvingCaptcha = MutableStateFlow(false)
 	private var loadingJob: Job? = null
 	private var randomJob: Job? = null
+	private var initialOpenMayStartVerification = true
 
 	override val content = combine(
 		mangaList.map { it?.skipNsfwIfNeeded() },
@@ -165,10 +166,12 @@ open class RemoteListViewModel @Inject constructor(
 		loadingJob?.let {
 			if (it.isActive) return it
 		}
+		val mayStartVerification = initialOpenMayStartVerification && !append
+		initialOpenMayStartVerification = false
 		return launchLoadingJob(Dispatchers.Default) {
 			try {
 				listError.value = null
-				val list = getListResolvingCaptcha(filterState, append)
+				val list = getListResolvingCaptcha(filterState, append, mayStartVerification)
 				val prevList = mangaList.value.orEmpty()
 				if (!append) {
 					mangaList.value = list.distinctById()
@@ -201,6 +204,7 @@ open class RemoteListViewModel @Inject constructor(
 	private suspend fun getListResolvingCaptcha(
 		filterState: FilterCoordinator.Snapshot,
 		append: Boolean,
+		mayStartVerification: Boolean,
 	): List<Manga> {
 		val offset = if (append) mangaList.value.sizeOrZero() else 0
 		return try {
@@ -217,6 +221,7 @@ open class RemoteListViewModel @Inject constructor(
 			// but pile up toasts/UI churn on the way there.
 			if (
 				cfException is CloudFlareProtectedException &&
+				mayStartVerification &&
 				!isResolvingCaptcha.value &&
 				!SourceSettings(appContext, source).isCaptchaAutoResolveDisabled
 			) {

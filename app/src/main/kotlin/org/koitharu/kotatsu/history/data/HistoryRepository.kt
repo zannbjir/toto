@@ -37,6 +37,7 @@ import org.koitharu.kotatsu.scrobbling.common.domain.tryScrobble
 import org.koitharu.kotatsu.search.domain.SearchKind
 import org.koitharu.kotatsu.tracker.domain.CheckNewChaptersUseCase
 import kotlin.math.abs
+import kotlin.math.ceil
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -268,7 +269,11 @@ class HistoryRepository @Inject constructor(
 		val referenceIndex = if (ReadingProgress.isCompleted(percent)) {
 			referenceCount - 1
 		} else {
-			(percent * referenceCount).toInt()
+			// percent counts the page currently on screen as read, so a value on an exact
+			// chapter boundary is ambiguous: "finished chapter i" or "still inside chapter i"
+			// (single-page long-strip chapters always sit on the boundary). Resolve to
+			// chapter i — never skip ahead — the preserved page/scroll belong to it anyway.
+			ceil(percent.toDouble() * referenceCount).toInt() - 1
 		}
 		return referenceIndex.coerceIn(0, newChaptersCount - 1)
 	}

@@ -44,7 +44,6 @@ import org.koitharu.kotatsu.core.model.UnknownMangaSource
 import org.koitharu.kotatsu.core.model.getTitle
 import org.koitharu.kotatsu.core.model.isNsfw
 import org.koitharu.kotatsu.core.nav.AppRouter
-import org.koitharu.kotatsu.core.network.webview.WebViewExecutor
 import org.koitharu.kotatsu.core.parser.favicon.faviconUri
 import org.koitharu.kotatsu.core.prefs.SourceSettings
 import org.koitharu.kotatsu.core.util.ext.checkNotificationPermission
@@ -67,7 +66,7 @@ class CaptchaHandler @Inject constructor(
 	@LocalizedAppContext private val context: Context,
 	private val databaseProvider: Provider<MangaDatabase>,
 	private val coilProvider: Provider<ImageLoader>,
-	private val webViewExecutor: WebViewExecutor,
+	private val captchaAutoResolveCoordinator: CaptchaAutoResolveCoordinator,
 ) : EventListener() {
 
 	private val exceptionMap = MutableScatterMap<MangaSource, CloudFlareProtectedException>()
@@ -112,9 +111,9 @@ class CaptchaHandler @Inject constructor(
 		}
 		if (
 			tryAutoResolve &&
-			exception != null &&
+			exception is CloudFlareProtectedException &&
 			!SourceSettings(context, source).isCaptchaAutoResolveDisabled &&
-			webViewExecutor.tryResolveCaptcha(exception, RESOLVE_TIMEOUT)
+			captchaAutoResolveCoordinator.resolveIfEnabled(exception)
 		) {
 			return@withContext true
 		}
@@ -295,6 +294,5 @@ class CaptchaHandler @Inject constructor(
 		private const val GROUP_NOTIFICATION_ID = 34
 		private const val SETTINGS_ACTION_CODE = 3
 		private const val ACTION_DISCARD = "org.koitharu.kotatsu.CAPTCHA_DISCARD"
-		private const val RESOLVE_TIMEOUT = 12_000L
 	}
 }

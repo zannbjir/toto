@@ -59,7 +59,7 @@ class PageViewModel(
 			val e = (state.value as? PageState.Error)?.error
 			if (e != null && ExceptionResolver.canResolve(e)) {
 				if (isFromUser) {
-					exceptionResolver.resolve(e)
+					exceptionResolver.resolve(e, tryAutoResolve = false)
 				}
 			}
 			withContext(Dispatchers.Default) {

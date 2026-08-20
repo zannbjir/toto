@@ -79,7 +79,7 @@
 	<!--== Default Theme ==-->
 	<style name="Theme.Kotatsu" parent="Base.Theme.Kotatsu" />
 
-	<!-- Used by CloudFlareHiddenActivity: same WebView pipeline, no visible UI. -->
+	<!-- Focused, rendered window for automatic Cloudflare resolution without visible navigation. -->
 	<style name="Theme.Kotatsu.CloudFlareHidden" parent="Theme.Kotatsu">
 		<item name="android:windowBackground">@android:color/transparent</item>
 		<item name="android:windowIsTranslucent">true</item>
@@ -91,8 +91,8 @@
 		<item name="android:colorBackground">@android:color/transparent</item>
 		<item name="android:statusBarColor">@android:color/transparent</item>
 		<item name="android:navigationBarColor">@android:color/transparent</item>
-		<item name="windowActionBar">false</item>
-		<item name="windowNoTitle">true</item>
+		<item name="android:windowActionBar">false</item>
+		<item name="android:backgroundDimEnabled">false</item>
 	</style>
 
 	<!-- Base ThemeOverlay -->

@@ -5,6 +5,7 @@ import androidx.annotation.CheckResult
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.koitharu.kotatsu.core.exceptions.resolve.CaptchaAutoResolveCoordinator
 import org.koitharu.kotatsu.core.parser.MangaRepository
 import org.koitharu.kotatsu.details.data.MangaDetails
 import org.koitharu.kotatsu.parsers.model.MangaChapter
@@ -17,6 +18,7 @@ private const val PAGES_TRIM_THRESHOLD = 120
 @ViewModelScoped
 class ChaptersLoader @Inject constructor(
 	private val mangaRepositoryFactory: MangaRepository.Factory,
+	private val captchaAutoResolveCoordinator: CaptchaAutoResolveCoordinator,
 ) {
 
 	private val chapters = LongSparseArray<MangaChapter>()
@@ -39,7 +41,7 @@ class ChaptersLoader @Inject constructor(
 		val index = if (isNext) chapters.indexOfFirst(predicate) else chapters.indexOfLast(predicate)
 		if (index == -1) return false
 		val newChapter = chapters.getOrNull(if (isNext) index + 1 else index - 1) ?: return false
-		val newPages = loadChapter(newChapter.id)
+		val newPages = loadChapter(newChapter.id, mayStartVerification = false)
 		mutex.withLock {
 			if (chapterPages.chaptersSize > 1) {
 				// trim pages
@@ -62,7 +64,7 @@ class ChaptersLoader @Inject constructor(
 
 	@CheckResult
 	suspend fun loadSingleChapter(chapterId: Long): Boolean {
-		val pages = loadChapter(chapterId)
+		val pages = loadChapter(chapterId, mayStartVerification = true)
 		return mutex.withLock {
 			chapterPages.clear()
 			chapterPages.addLast(chapterId, pages)
@@ -90,10 +92,19 @@ class ChaptersLoader @Inject constructor(
 
 	fun snapshot() = chapterPages.toList()
 
-	private suspend fun loadChapter(chapterId: Long): List<ReaderPage> {
+	private suspend fun loadChapter(
+		chapterId: Long,
+		mayStartVerification: Boolean,
+	): List<ReaderPage> {
 		val chapter = checkNotNull(chapters[chapterId]) { "Requested chapter not found" }
 		val repo = mangaRepositoryFactory.create(chapter.source)
-		return repo.getPages(chapter).mapIndexed { index, page ->
+		val pages = captchaAutoResolveCoordinator.runWithVerification(
+			source = chapter.source,
+			mayStartVerification = mayStartVerification,
+		) {
+			repo.getPages(chapter)
+		}
+		return pages.mapIndexed { index, page ->
 			ReaderPage(page, index, chapterId)
 		}
 	}

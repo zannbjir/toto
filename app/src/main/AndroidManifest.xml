@@ -182,7 +182,7 @@
 			android:name="org.koitharu.kotatsu.browser.cloudflare.CloudFlareActivity"
 			android:autoRemoveFromRecents="true"
 			android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-			android:windowSoftInputMode="adjustResize" />
+			android:windowSoftInputMode="adjustNothing" />
 		<activity
 			android:name="org.koitharu.kotatsu.settings.sources.auth.SourceAuthActivity"
 			android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"

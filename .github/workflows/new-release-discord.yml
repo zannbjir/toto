@@ -15,7 +15,7 @@ jobs:
         with:
           webhook-url: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
           content: "<@&1539619187587022888>"
-          embed-title: "🚀 New Release: ${{ github.event.repository.name }} v${{ github.event.release.tag_name }}"
+          embed-title: "🚀 New Release: ${{ github.event.repository.name }} ${{ github.event.release.tag_name }}"
           embed-url: "${{ github.event.release.html_url }}"
           embed-description: "${{ github.event.release.body }}"
           embed-color: 3447003

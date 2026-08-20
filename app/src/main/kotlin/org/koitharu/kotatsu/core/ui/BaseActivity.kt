@@ -59,8 +59,7 @@ abstract class BaseActivity<B : ViewBinding> :
 
 	/**
 	 * If true (default), apply the app's color-scheme theme overlay on top of the manifest theme.
-	 * Override to false for activities whose manifest theme must be preserved as-is — e.g.
-	 * `CloudFlareHiddenActivity`, which needs its translucent theme intact.
+	 * Override to false for activities whose manifest theme must be preserved as-is.
 	 */
 	protected open val applyColorSchemeTheme: Boolean = true
 

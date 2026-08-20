@@ -33,6 +33,7 @@ import okhttp3.OkHttpClient
 import org.koitharu.kotatsu.BuildConfig
 import org.koitharu.kotatsu.backups.domain.BackupObserver
 import org.koitharu.kotatsu.core.db.MangaDatabase
+import org.koitharu.kotatsu.core.exceptions.resolve.CaptchaAutoResolveCoordinator
 import org.koitharu.kotatsu.core.exceptions.resolve.CaptchaHandler
 import org.koitharu.kotatsu.core.image.AvifImageDecoder
 import org.koitharu.kotatsu.core.image.CbzFetcher
@@ -178,12 +179,14 @@ interface AppModule {
 			acraScreenLogger: AcraScreenLogger,
 			screenshotPolicyHelper: ScreenshotPolicyHelper,
 			foregroundActivityHolder: ForegroundActivityHolder,
+			captchaAutoResolveCoordinator: CaptchaAutoResolveCoordinator,
 		): Set<@JvmSuppressWildcards Application.ActivityLifecycleCallbacks> = arraySetOf(
 			appProtectHelper,
 			activityRecreationHandle,
 			acraScreenLogger,
 			screenshotPolicyHelper,
 			foregroundActivityHolder,
+			captchaAutoResolveCoordinator,
 		)
 
 		@Provides
